@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -375,6 +376,80 @@ canvas.chart-canvas { width:100%; }
   .stats-row { grid-template-columns:repeat(2,1fr); }
   .filter-bar { flex-direction:column; }
 }
+
+/* ═══════════ FEEDBACK PAGE ═══════════ */
+.tab-bar { display:flex; gap:4px; margin-bottom:18px; background:var(--bg3); border:1px solid var(--bdr); border-radius:11px; padding:4px; width:fit-content; }
+.tab-btn { padding:7px 18px; border-radius:8px; border:none; background:transparent; color:var(--text2); font-family:var(--sans); font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:6px; }
+.tab-btn.active { background:var(--bg2); color:var(--text); box-shadow:0 2px 8px rgba(0,0,0,.3); }
+.tab-btn .tab-cnt { font-size:10px; font-weight:800; padding:2px 6px; border-radius:100px; background:var(--surf2); color:var(--text3); }
+.tab-btn.active .tab-cnt { background:rgba(59,130,246,.18); color:var(--blue); }
+
+.fb-grid { display:flex; flex-direction:column; gap:10px; }
+.fb-card {
+  background:var(--bg2); border:1px solid var(--bdr); border-radius:14px;
+  overflow:hidden; transition:border-color .2s, box-shadow .2s;
+  cursor:pointer;
+}
+.fb-card:hover { border-color:var(--bdr2); box-shadow:0 6px 24px rgba(0,0,0,.3); }
+.fb-card.new-item { border-left:3px solid var(--blue); }
+.fb-card.reviewed { border-left:3px solid var(--green); opacity:.75; }
+.fb-card-head { display:flex; align-items:center; gap:12px; padding:14px 18px; }
+.fb-type-ico { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.fb-type-ico.suggest { background:rgba(139,92,246,.15); }
+.fb-type-ico.bug     { background:rgba(239,68,68,.15); }
+.fb-meta { flex:1; min-width:0; }
+.fb-name { font-size:14px; font-weight:700; }
+.fb-sub  { font-size:11px; color:var(--text2); margin-top:2px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.fb-status { font-size:9px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; padding:2px 7px; border-radius:100px; }
+.fb-status.new      { background:rgba(59,130,246,.15); color:var(--blue); border:1px solid rgba(59,130,246,.25); }
+.fb-status.reviewed { background:rgba(16,185,129,.12); color:var(--green); border:1px solid rgba(16,185,129,.25); }
+.fb-cat-chip { font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; background:var(--surf2); color:var(--text2); border:1px solid var(--bdr); }
+.fb-ts { margin-left:auto; font-size:10px; color:var(--text3); font-family:var(--mono); white-space:nowrap; flex-shrink:0; }
+.fb-body { padding:0 18px 14px; font-size:13px; color:var(--text2); line-height:1.6; }
+.fb-body p { margin:0; white-space:pre-wrap; word-break:break-word; }
+.fb-actions { display:flex; gap:8px; padding:10px 18px 14px; border-top:1px solid var(--bdr); }
+.fb-btn { padding:6px 14px; border-radius:8px; border:none; font-family:var(--sans); font-size:12px; font-weight:700; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:5px; }
+.fb-btn.notify { background:rgba(59,130,246,.14); color:var(--blue); border:1px solid rgba(59,130,246,.25); }
+.fb-btn.notify:hover { background:rgba(59,130,246,.24); transform:translateY(-1px); }
+.fb-btn.review { background:rgba(16,185,129,.12); color:var(--green); border:1px solid rgba(16,185,129,.25); }
+.fb-btn.review:hover { background:rgba(16,185,129,.2); transform:translateY(-1px); }
+.fb-btn.del { background:rgba(239,68,68,.1); color:var(--red); border:1px solid rgba(239,68,68,.2); }
+.fb-btn.del:hover { background:rgba(239,68,68,.18); transform:translateY(-1px); }
+.fb-empty { text-align:center; padding:60px 20px; }
+.fb-email-chip { font-size:10px; color:var(--cyan); font-family:var(--mono); }
+
+/* ═══════════ NOTIFICATION MODAL ═══════════ */
+.notif-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); backdrop-filter:blur(12px); z-index:600; display:none; align-items:center; justify-content:center; padding:20px; }
+.notif-overlay.on { display:flex; animation:fadeIn .22s var(--ease); }
+.notif-modal { background:var(--bg2); border:1px solid var(--bdr2); border-radius:20px; width:100%; max-width:520px; animation:cardUp .35s var(--spring); box-shadow:0 32px 80px rgba(0,0,0,.7); overflow:hidden; }
+.nm-head { padding:22px 24px 16px; border-bottom:1px solid var(--bdr); display:flex; align-items:center; gap:12px; }
+.nm-ico { font-size:28px; }
+.nm-title { font-size:18px; font-weight:700; flex:1; }
+.nm-close { width:34px; height:34px; border-radius:50%; background:var(--surf); border:1px solid var(--bdr); color:var(--text2); font-size:15px; cursor:pointer; transition:all .2s; }
+.nm-close:hover { border-color:var(--red); color:var(--red); }
+.nm-body { padding:20px 24px 24px; }
+.nm-field { margin-bottom:14px; }
+.nm-field label { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--text2); margin-bottom:6px; }
+.nm-inp { width:100%; background:var(--bg3); border:1.5px solid var(--bdr); color:var(--text); border-radius:9px; padding:9px 13px; font-size:13px; font-family:var(--sans); outline:none; transition:border-color .2s, box-shadow .2s; box-sizing:border-box; }
+.nm-inp:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+.nm-sel { cursor:pointer; }
+.nm-textarea { resize:vertical; min-height:90px; }
+.nm-preview { background:var(--bg3); border:1px solid var(--bdr); border-radius:10px; padding:13px 15px; margin-bottom:16px; }
+.nm-preview-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--text3); margin-bottom:8px; }
+.nm-preview-title { font-size:14px; font-weight:700; margin-bottom:4px; }
+.nm-preview-body { font-size:12px; color:var(--text2); line-height:1.5; }
+.nm-send-btn { width:100%; padding:12px; border-radius:10px; border:none; background:linear-gradient(135deg,var(--blue),var(--bblue)); color:#fff; font-weight:700; font-size:14px; font-family:var(--sans); cursor:pointer; box-shadow:0 6px 22px rgba(59,130,246,.35); transition:all .2s; }
+.nm-send-btn:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(59,130,246,.45); }
+.nm-send-btn:disabled { opacity:.5; cursor:default; transform:none; }
+.nm-target-chip { display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:100px; background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.25); color:var(--blue); font-size:12px; font-weight:700; margin-bottom:12px; }
+.notif-history { display:flex; flex-direction:column; gap:8px; margin-top:20px; }
+.nh-card { background:var(--bg3); border:1px solid var(--bdr); border-radius:10px; padding:12px 14px; display:flex; align-items:flex-start; gap:10px; }
+.nh-ico { font-size:18px; flex-shrink:0; }
+.nh-body { flex:1; min-width:0; }
+.nh-title { font-size:13px; font-weight:700; }
+.nh-msg { font-size:11px; color:var(--text2); margin-top:2px; }
+.nh-meta { font-size:10px; color:var(--text3); margin-top:4px; font-family:var(--mono); }
+
 </style>
 </head>
 <body>
@@ -434,6 +509,11 @@ canvas.chart-canvas { width:100%; }
       <div class="sn-item" data-page="live" onclick="navTo('live',this)">
         <span class="sn-ico">⚡</span><span class="sn-lbl">Live Feed</span>
         <div class="live-dot" id="live-dot"></div>
+      </div>
+      <div class="sn-section-lbl" style="margin-top:8px">Community</div>
+      <div class="sn-item" data-page="feedback" onclick="navTo('feedback',this)">
+        <span class="sn-ico">💬</span><span class="sn-lbl">Feedback</span>
+        <span class="sn-badge" id="feedback-badge" style="display:none">0</span>
       </div>
       <div class="sn-section-lbl" style="margin-top:8px">System</div>
       <div class="sn-item" data-page="settings" onclick="navTo('settings',this)">
@@ -646,10 +726,55 @@ canvas.chart-canvas { width:100%; }
           <div class="settings-card">
             <div class="settings-card-title">ℹ️ System Info</div>
             <div class="settings-card-sub">Current admin panel status and build info.</div>
-            <div class="setting-row"><div class="setting-lbl">Version</div><div style="font-family:var(--mono);font-size:12px;color:var(--text2)">v1.6.0 BETA</div></div>
+            <div class="setting-row"><div class="setting-lbl">Version</div><div style="font-family:var(--mono);font-size:12px;color:var(--text2)">v1.7.0 BETA</div></div>
             <div class="setting-row"><div class="setting-lbl">Storage API</div><div id="s-storage-status" style="font-size:12px;font-weight:600;color:var(--green)">Checking...</div></div>
             <div class="setting-row"><div class="setting-lbl">BroadcastChannel</div><div id="s-bc-status" style="font-size:12px;font-weight:600;color:var(--green)">Checking...</div></div>
             <div class="setting-row" style="border-bottom:none"><div class="setting-lbl">Total Users Tracked</div><div id="s-user-count" style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--yellow)">0</div></div>
+          </div>
+        </div>
+      </div>
+
+    
+      <!-- ── FEEDBACK PAGE ── -->
+      <div class="page" id="page-feedback">
+        <div class="stats-row" style="margin-bottom:20px">
+          <div class="stat-card purple"><span class="sc-ico">💡</span><span class="sc-val" id="fb-suggest-cnt">0</span><span class="sc-lbl">Suggestions</span></div>
+          <div class="stat-card red"><span class="sc-ico">🐛</span><span class="sc-val" id="fb-bug-cnt">0</span><span class="sc-lbl">Bug Reports</span></div>
+          <div class="stat-card blue"><span class="sc-ico">📬</span><span class="sc-val" id="fb-new-cnt">0</span><span class="sc-lbl">Unreviewed</span></div>
+          <div class="stat-card green"><span class="sc-ico">✅</span><span class="sc-val" id="fb-reviewed-cnt">0</span><span class="sc-lbl">Reviewed</span></div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div class="tab-bar" id="fb-tabs">
+            <button class="tab-btn active" onclick="switchFbTab('suggest',this)">💡 Suggestions <span class="tab-cnt" id="tab-suggest-cnt">0</span></button>
+            <button class="tab-btn" onclick="switchFbTab('bug',this)">🐛 Bug Reports <span class="tab-cnt" id="tab-bug-cnt">0</span></button>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="fb-btn notify" onclick="openNotifModal('_broadcast')">📣 Broadcast to All Users</button>
+            <button class="refresh-btn" onclick="loadFeedback()"><span class="r-ico">↻</span> Refresh</button>
+          </div>
+        </div>
+
+        <div class="filter-bar" style="margin-bottom:16px">
+          <div class="search-wrap" style="max-width:300px">
+            <span class="search-ico">🔍</span>
+            <input class="search-inp" id="fb-search" placeholder="Search by name or message…" oninput="renderFeedback()">
+          </div>
+          <select class="filter-sel" id="fb-filter-status" onchange="renderFeedback()">
+            <option value="">All Status</option>
+            <option value="new">Unreviewed</option>
+            <option value="reviewed">Reviewed</option>
+          </select>
+          <select class="filter-sel" id="fb-filter-cat" onchange="renderFeedback()">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+
+        <div class="fb-grid" id="fb-list">
+          <div class="fb-empty">
+            <span class="empty-ico">💬</span>
+            <div class="empty-msg">Loading feedback submissions…</div>
+            <div class="empty-sub">Feedback submitted via Fluentex will appear here</div>
           </div>
         </div>
       </div>
@@ -683,6 +808,53 @@ canvas.chart-canvas { width:100%; }
   </div>
 </div>
 
+
+<!-- NOTIFICATION SEND MODAL -->
+<div class="notif-overlay" id="notif-modal">
+  <div class="notif-modal">
+    <div class="nm-head">
+      <span class="nm-ico">🔔</span>
+      <div>
+        <div class="nm-title" id="nm-title">Send Push Notification</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px" id="nm-subtitle">Notify a specific user or broadcast to all</div>
+      </div>
+      <button class="nm-close" onclick="closeNotifModal()">✕</button>
+    </div>
+    <div class="nm-body">
+      <div id="nm-target-display" class="nm-target-chip" style="display:none">
+        <span>👤</span><span id="nm-target-name">All Users</span>
+      </div>
+
+      <div class="nm-field">
+        <label>Notification Type</label>
+        <select class="nm-inp nm-sel" id="nm-type" onchange="updateNotifPreview()">
+          <option value="info">ℹ️ Info</option>
+          <option value="success">✅ Success</option>
+          <option value="warning">⚠️ Warning</option>
+          <option value="announcement">📣 Announcement</option>
+          <option value="reply">💬 Reply to Feedback</option>
+        </select>
+      </div>
+      <div class="nm-field">
+        <label>Title</label>
+        <input class="nm-inp" id="nm-notif-title" type="text" placeholder="e.g. New Feature Available!" maxlength="80" oninput="updateNotifPreview()">
+      </div>
+      <div class="nm-field">
+        <label>Message</label>
+        <textarea class="nm-inp nm-textarea" id="nm-message" placeholder="Write your message here…" maxlength="400" oninput="updateNotifPreview()"></textarea>
+      </div>
+
+      <div class="nm-preview" id="nm-preview" style="display:none">
+        <div class="nm-preview-label">Preview</div>
+        <div class="nm-preview-title" id="nm-preview-title"></div>
+        <div class="nm-preview-body" id="nm-preview-body"></div>
+      </div>
+
+      <button class="nm-send-btn" id="nm-send-btn" onclick="sendNotification()">🔔 Send Notification</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -697,18 +869,30 @@ const DEFAULT_USER   = 'admin';
 const DEFAULT_PASS   = 'fluentex2026';
 
 const LB_KEYS      = ['fx_lb_v6', 'fx_lb_v5', 'fluentex_lb_v5', 'fluentex_lb_v4'];
+const FX_SUGGEST_PFX = 'fx_suggest_v1:';
+const FX_BUG_PFX     = 'fx_bug_v1:';
+const FX_NOTIF_PFX   = 'fx_notif_v1:';
 const STORAGE_PREFIX = 'fx_lb_v6:';
 const STORAGE_PREFIX2= 'fluentex_lb:';
 
 const BADGE_DEFS = [
-  {id:'first_quiz',ico:'🌟',name:'First Step'}, {id:'streak_3',ico:'🔥',name:'On Fire'},
-  {id:'streak_7',ico:'🏅',name:'Week Warrior'}, {id:'streak_30',ico:'💎',name:'Diamond Habit'},
-  {id:'xp_100',ico:'⚡',name:'Spark'},          {id:'xp_500',ico:'🏆',name:'Champion'},
-  {id:'xp_1000',ico:'👑',name:'Master'},        {id:'xp_5000',ico:'🌌',name:'Legend'},
-  {id:'quiz_5',ico:'📚',name:'Bookworm'},       {id:'quiz_20',ico:'🎓',name:'Scholar'},
-  {id:'quiz_50',ico:'🏛️',name:'Professor'},     {id:'perfect',ico:'🎯',name:'Sharpshooter'},
-  {id:'speed',ico:'💨',name:'Speed Demon'},     {id:'vocab_50',ico:'📖',name:'Word Wizard'},
-  {id:'grammar_50',ico:'✏️',name:'Grammar Guru'},{id:'all_cats',ico:'🌈',name:'Renaissance'},
+  {id:'streak_3',ico:'⚡',name:'Getting Started'},{id:'streak_7',ico:'🔥',name:'Week Warrior'},
+  {id:'streak_14',ico:'🏅',name:'Fortnight Fighter'},{id:'streak_30',ico:'💎',name:'Diamond Habit'},
+  {id:'streak_60',ico:'🔮',name:'Iron Will'},{id:'streak_100',ico:'🌌',name:'Century Champion'},
+  {id:'xp_250',ico:'✨',name:'Spark'},{id:'xp_1000',ico:'⚡',name:'Dynamo'},
+  {id:'xp_3000',ico:'🏆',name:'Champion'},{id:'xp_7500',ico:'👑',name:'Master'},
+  {id:'xp_15000',ico:'🌌',name:'Legend'},{id:'xp_30000',ico:'🪐',name:'Grandmaster'},
+  {id:'first_quiz',ico:'🌟',name:'First Step'},{id:'quiz_10',ico:'📗',name:'Bookworm'},
+  {id:'quiz_50',ico:'📚',name:'Studious'},{id:'quiz_100',ico:'🎓',name:'Scholar'},
+  {id:'quiz_250',ico:'🏛️',name:'Professor'},{id:'quiz_500',ico:'🧠',name:'Genius'},
+  {id:'perfect',ico:'🎯',name:'Sharpshooter'},{id:'perfect_5',ico:'🏹',name:'Marksman'},
+  {id:'perfect_20',ico:'💫',name:'Sniper'},{id:'speed',ico:'💨',name:'Speed Demon'},
+  {id:'speed_10',ico:'🚀',name:'Hyperdrive'},{id:'vocab_100',ico:'📖',name:'Word Wizard'},
+  {id:'vocab_500',ico:'📕',name:'Lexicon Master'},{id:'grammar_100',ico:'✏️',name:'Grammar Guru'},
+  {id:'grammar_500',ico:'📝',name:'Syntax Sage'},{id:'idioms_50',ico:'💬',name:'Phrase Whisperer'},
+  {id:'reading_50',ico:'📰',name:'Deep Reader'},{id:'all_cats',ico:'🌈',name:'Renaissance'},
+  {id:'all_levels',ico:'🗺️',name:'Polyglot'},{id:'comeback',ico:'🔄',name:'Comeback Kid'},
+  {id:'social_lb',ico:'🏟️',name:'Crowd Pleaser'},
 ];
 const CAT_ICONS = {vocabulary:'📖',grammar:'✍️',idioms:'💬',spelling:'🔤',conversation:'🗣️',reading:'📰'};
 const RANKS = ['Beginner','Learner','Explorer','Scholar','Master','Legend','Grandmaster'];
@@ -717,6 +901,11 @@ const RANKS = ['Beginner','Learner','Explorer','Scholar','Master','Legend','Gran
    STATE
 ══════════════════════════════════════════════ */
 let allUsers     = [];
+let allSuggestions = [];
+let allBugReports  = [];
+let fbTab          = 'suggest';
+let notifTarget    = '_broadcast';
+let notifRefItem   = null;
 let filteredUsers= [];
 let feedEvents   = [];
 let feedEventCnt = 0;
@@ -897,6 +1086,7 @@ async function refreshData(){
     updateAllViews();
     document.getElementById('last-refresh').textContent = `Last: ${new Date().toLocaleTimeString()}`;
     document.getElementById('s-user-count').textContent = allUsers.length;
+    loadFeedback(false); // silent refresh
     document.getElementById('user-count-badge').textContent = allUsers.length;
   } catch(e){
     showToast('❌ Failed to load data', 'error');
@@ -1358,6 +1548,7 @@ const PAGE_META = {
   analytics: { title:'Analytics',       sub:'Aggregated performance data and learning trends' },
   live:      { title:'Live Feed',       sub:'Real-time event stream from active Fluentex sessions' },
   settings:  { title:'Settings',        sub:'Admin credentials, data settings and system info' },
+  feedback:  { title:'Feedback',        sub:'User-submitted feature suggestions and bug reports' },
 };
 function navTo(pageId, el){
   document.querySelectorAll('.sn-item').forEach(i=>i.classList.remove('active'));
@@ -1369,6 +1560,7 @@ function navTo(pageId, el){
   document.getElementById('page-sub').textContent   = meta.sub   || '';
   if(pageId==='analytics') updateAnalytics();
   if(pageId==='live') renderFeed();
+  if(pageId==='feedback') loadFeedback();
 }
 function toggleNav(){
   document.getElementById('sidenav').classList.toggle('collapsed');
@@ -1409,6 +1601,303 @@ document.getElementById('user-modal').addEventListener('click', e=>{
 document.addEventListener('keydown', e=>{
   if(e.key==='Escape') closeUserModal();
 });
+
+/* ══════════════════════════════════════════════
+   FEEDBACK — Suggestions & Bug Reports
+══════════════════════════════════════════════ */
+
+async function loadFeedback(showToast_=true){
+  if(typeof window.storage === 'undefined'){
+    document.getElementById('fb-list').innerHTML =
+      '<div class="fb-empty"><span class="empty-ico">⚠️</span><div class="empty-msg">Shared storage unavailable</div><div class="empty-sub">window.storage API is required to load feedback submissions</div></div>';
+    return;
+  }
+
+  allSuggestions = [];
+  allBugReports  = [];
+
+  try {
+    // load suggestions
+    const sList = await window.storage.list(FX_SUGGEST_PFX, true);
+    if(sList && sList.keys && sList.keys.length){
+      const results = await Promise.allSettled(sList.keys.map(k => window.storage.get(k, true)));
+      results.forEach(r => {
+        if(r.status === 'fulfilled' && r.value && r.value.value){
+          try { const item = JSON.parse(r.value.value); if(item && item.id) allSuggestions.push(item); } catch(e){}
+        }
+      });
+    }
+    // load bug reports
+    const bList = await window.storage.list(FX_BUG_PFX, true);
+    if(bList && bList.keys && bList.keys.length){
+      const results = await Promise.allSettled(bList.keys.map(k => window.storage.get(k, true)));
+      results.forEach(r => {
+        if(r.status === 'fulfilled' && r.value && r.value.value){
+          try { const item = JSON.parse(r.value.value); if(item && item.id) allBugReports.push(item); } catch(e){}
+        }
+      });
+    }
+  } catch(e){ console.warn('loadFeedback error:', e); }
+
+  // Sort newest first
+  allSuggestions.sort((a,b) => new Date(b.ts||0) - new Date(a.ts||0));
+  allBugReports.sort((a,b)  => new Date(b.ts||0) - new Date(a.ts||0));
+
+  updateFeedbackStats();
+  buildCatFilter();
+  renderFeedback();
+  if(showToast_) showToast(`✅ Loaded ${allSuggestions.length + allBugReports.length} submissions`, 'success');
+}
+
+function updateFeedbackStats(){
+  const all = [...allSuggestions, ...allBugReports];
+  const newCnt  = all.filter(x => x.status !== 'reviewed').length;
+  const revCnt  = all.filter(x => x.status === 'reviewed').length;
+
+  document.getElementById('fb-suggest-cnt').textContent  = allSuggestions.length;
+  document.getElementById('fb-bug-cnt').textContent      = allBugReports.length;
+  document.getElementById('fb-new-cnt').textContent      = newCnt;
+  document.getElementById('fb-reviewed-cnt').textContent = revCnt;
+  document.getElementById('tab-suggest-cnt').textContent = allSuggestions.length;
+  document.getElementById('tab-bug-cnt').textContent     = allBugReports.length;
+
+  const badge = document.getElementById('feedback-badge');
+  if(newCnt > 0){ badge.textContent = newCnt; badge.style.display = ''; }
+  else { badge.style.display = 'none'; }
+}
+
+function buildCatFilter(){
+  const items = fbTab === 'suggest' ? allSuggestions : allBugReports;
+  const cats  = [...new Set(items.map(x => x.category || x.bugType || '').filter(Boolean))];
+  const sel   = document.getElementById('fb-filter-cat');
+  if(!sel) return;
+  const cur   = sel.value;
+  sel.innerHTML = '<option value="">All Categories</option>' +
+    cats.map(c => `<option value="${esc(c)}" ${c===cur?'selected':''}>${esc(c)}</option>`).join('');
+}
+
+function switchFbTab(tab, el){
+  fbTab = tab;
+  document.querySelectorAll('#fb-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  buildCatFilter();
+  renderFeedback();
+}
+
+function renderFeedback(){
+  const items   = fbTab === 'suggest' ? allSuggestions : allBugReports;
+  const q       = (document.getElementById('fb-search')?.value || '').toLowerCase();
+  const status  = document.getElementById('fb-filter-status')?.value || '';
+  const catF    = document.getElementById('fb-filter-cat')?.value || '';
+
+  let filtered = items;
+  if(q) filtered = filtered.filter(x =>
+    (x.name||'').toLowerCase().includes(q) ||
+    (x.message||x.description||'').toLowerCase().includes(q) ||
+    (x.email||'').toLowerCase().includes(q)
+  );
+  if(status === 'new')      filtered = filtered.filter(x => x.status !== 'reviewed');
+  if(status === 'reviewed') filtered = filtered.filter(x => x.status === 'reviewed');
+  if(catF) filtered = filtered.filter(x => (x.category||x.bugType||'') === catF);
+
+  const list = document.getElementById('fb-list');
+
+  if(!filtered.length){
+    list.innerHTML = `<div class="fb-empty">
+      <span class="empty-ico">${fbTab==='suggest'?'💡':'🐛'}</span>
+      <div class="empty-msg">No ${fbTab==='suggest'?'suggestions':'bug reports'} found</div>
+      <div class="empty-sub">${items.length>0?'Try adjusting your filters':'No submissions yet'}</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(item => renderFbCard(item)).join('');
+}
+
+function renderFbCard(item){
+  const isSuggest = item.type === 'suggestion';
+  const isNew     = item.status !== 'reviewed';
+  const cat       = esc(item.category || item.bugType || 'Other');
+  const ts        = item.ts ? new Date(item.ts).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+  const msg       = esc(item.message || item.description || '');
+  const emailHtml = item.email ? `<span class="fb-email-chip">✉️ ${esc(item.email)}</span>` : '';
+
+  return `<div class="fb-card ${isNew?'new-item':'reviewed'}" id="fbcard-${esc(item.id)}">
+    <div class="fb-card-head">
+      <div class="fb-type-ico ${isSuggest?'suggest':'bug'}">${isSuggest?'💡':'🐛'}</div>
+      <div class="fb-meta">
+        <div class="fb-name">${esc(item.name||'Anonymous')}</div>
+        <div class="fb-sub">
+          <span class="fb-status ${isNew?'new':'reviewed'}">${isNew?'NEW':'REVIEWED'}</span>
+          <span class="fb-cat-chip">${cat}</span>
+          ${emailHtml}
+        </div>
+      </div>
+      <div class="fb-ts">${ts}</div>
+    </div>
+    <div class="fb-body"><p>${msg}</p></div>
+    <div class="fb-actions">
+      <button class="fb-btn notify" onclick="event.stopPropagation();openNotifModal('${esc(item.name||'')}','${esc(item.id)}','${isSuggest?'suggest':'bug'}')" title="Send push notification">🔔 Notify User</button>
+      ${isNew
+        ? `<button class="fb-btn review" onclick="event.stopPropagation();markReviewed('${esc(item.id)}','${isSuggest?'suggest':'bug'}')" title="Mark as reviewed">✅ Mark Reviewed</button>`
+        : `<button class="fb-btn review" style="opacity:.5;cursor:default" disabled>✅ Reviewed</button>`
+      }
+      <button class="fb-btn del" onclick="event.stopPropagation();deleteFeedback('${esc(item.id)}','${isSuggest?'suggest':'bug'}')" title="Delete submission">🗑 Delete</button>
+      ${item.ua ? `<span style="margin-left:auto;font-size:10px;color:var(--text3);font-family:var(--mono);align-self:center" title="${esc(item.ua)}">🖥 ${esc(item.ua.slice(0,40))}…</span>` : ''}
+    </div>
+  </div>`;
+}
+
+async function markReviewed(id, type){
+  const arr = type === 'suggest' ? allSuggestions : allBugReports;
+  const pfx = type === 'suggest' ? FX_SUGGEST_PFX : FX_BUG_PFX;
+  const item = arr.find(x => x.id === id);
+  if(!item) return;
+  item.status = 'reviewed';
+  try {
+    await window.storage.set(pfx + item.id, JSON.stringify(item), true);
+    updateFeedbackStats();
+    renderFeedback();
+    showToast('✅ Marked as reviewed', 'success');
+  } catch(e){ showToast('❌ Failed to update', 'error'); }
+}
+
+async function deleteFeedback(id, type){
+  if(!confirm('Delete this submission permanently?')) return;
+  const arr = type === 'suggest' ? allSuggestions : allBugReports;
+  const pfx = type === 'suggest' ? FX_SUGGEST_PFX : FX_BUG_PFX;
+  try {
+    await window.storage.delete(pfx + id, true);
+    if(type === 'suggest') allSuggestions = allSuggestions.filter(x => x.id !== id);
+    else allBugReports = allBugReports.filter(x => x.id !== id);
+    updateFeedbackStats();
+    renderFeedback();
+    showToast('🗑 Submission deleted', 'info');
+  } catch(e){ showToast('❌ Failed to delete', 'error'); }
+}
+
+/* ══════════════════════════════════════════════
+   PUSH NOTIFICATIONS
+══════════════════════════════════════════════ */
+
+function openNotifModal(targetUser, refItemId, refType){
+  notifTarget  = targetUser || '_broadcast';
+  notifRefItem = refItemId  ? { id: refItemId, type: refType } : null;
+
+  const isBroadcast = (notifTarget === '_broadcast');
+  document.getElementById('nm-title').textContent    = isBroadcast ? 'Broadcast to All Users' : 'Send Notification';
+  document.getElementById('nm-subtitle').textContent = isBroadcast
+    ? 'All Fluentex users will see this notification'
+    : `Notification will be delivered to: ${targetUser}`;
+
+  const targetDisplay = document.getElementById('nm-target-display');
+  targetDisplay.style.display = '';
+  targetDisplay.querySelector('#nm-target-name').textContent = isBroadcast ? '📣 All Users' : targetUser;
+  targetDisplay.style.background = isBroadcast ? 'rgba(245,158,11,.12)' : 'rgba(59,130,246,.12)';
+  targetDisplay.style.borderColor = isBroadcast ? 'rgba(245,158,11,.3)' : 'rgba(59,130,246,.25)';
+  targetDisplay.style.color       = isBroadcast ? 'var(--yellow)' : 'var(--blue)';
+
+  // Pre-fill for feedback reply
+  if(refItemId){
+    document.getElementById('nm-type').value = 'reply';
+    document.getElementById('nm-notif-title').value = 'We reviewed your feedback';
+    document.getElementById('nm-message').value = 'Thank you for submitting your feedback! Our team has reviewed it and will take it into account.';
+  } else {
+    document.getElementById('nm-type').value = 'info';
+    document.getElementById('nm-notif-title').value = '';
+    document.getElementById('nm-message').value = '';
+  }
+
+  const btn = document.getElementById('nm-send-btn');
+  btn.disabled = false;
+  btn.textContent = '🔔 Send Notification';
+  updateNotifPreview();
+  document.getElementById('notif-modal').classList.add('on');
+}
+
+function closeNotifModal(){
+  document.getElementById('notif-modal').classList.remove('on');
+}
+
+function updateNotifPreview(){
+  const title = document.getElementById('nm-notif-title').value.trim();
+  const msg   = document.getElementById('nm-message').value.trim();
+  const preview = document.getElementById('nm-preview');
+  if(title || msg){
+    preview.style.display = '';
+    document.getElementById('nm-preview-title').textContent = title || '(no title)';
+    document.getElementById('nm-preview-body').textContent  = msg   || '(no message)';
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+async function sendNotification(){
+  const title = document.getElementById('nm-notif-title').value.trim();
+  const msg   = document.getElementById('nm-message').value.trim();
+  const type  = document.getElementById('nm-type').value;
+
+  if(!title || !msg){ showToast('⚠️ Fill in title and message', 'error'); return; }
+  if(typeof window.storage === 'undefined'){ showToast('❌ Shared storage unavailable', 'error'); return; }
+
+  const btn = document.getElementById('nm-send-btn');
+  btn.disabled   = true;
+  btn.textContent= 'Sending…';
+
+  const isBroadcast = (notifTarget === '_broadcast');
+  const ts  = Date.now();
+  const nid = 'notif_' + ts;
+
+  const notif = {
+    id:     nid,
+    title:  title,
+    message:msg,
+    type:   type,
+    from:   'admin',
+    target: notifTarget,
+    ts:     ts,
+    read:   false,
+    refItem: notifRefItem || null,
+  };
+
+  try {
+    if(isBroadcast){
+      // Broadcast: store under a well-known broadcast key + timestamp
+      const key = FX_NOTIF_PFX + '_broadcast_' + ts;
+      await window.storage.set(key, JSON.stringify(notif), true);
+    } else {
+      // User-specific: key by slugged username
+      const slug = notifTarget.toLowerCase().replace(/[^a-z0-9]/g,'_').slice(0,24);
+      const key  = FX_NOTIF_PFX + slug + '_' + ts;
+      await window.storage.set(key, JSON.stringify(notif), true);
+    }
+
+    // If replying to feedback, mark it reviewed automatically
+    if(notifRefItem){
+      await markReviewed(notifRefItem.id, notifRefItem.type);
+    }
+
+    closeNotifModal();
+    addFeedEvent({
+      ico:  '🔔',
+      msg:  `Admin sent <span>${type}</span> notification → ${isBroadcast ? 'All Users' : notifTarget}`,
+      detail: `"${title}"`,
+      time: new Date().toLocaleTimeString()
+    });
+    showToast(`✅ Notification sent to ${isBroadcast?'all users':notifTarget}`, 'success');
+  } catch(e){
+    btn.disabled   = false;
+    btn.textContent= '🔔 Send Notification';
+    showToast('❌ Failed to send: ' + e.message, 'error');
+  }
+}
+
+// Close notif modal on overlay click
+document.addEventListener('DOMContentLoaded', function(){
+  const notifOvl = document.getElementById('notif-modal');
+  if(notifOvl) notifOvl.addEventListener('click', e=>{ if(e.target===e.currentTarget) closeNotifModal(); });
+});
+
 </script>
 </body>
 </html>
