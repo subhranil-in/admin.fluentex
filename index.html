@@ -450,6 +450,48 @@ canvas.chart-canvas { width:100%; }
 .nh-msg { font-size:11px; color:var(--text2); margin-top:2px; }
 .nh-meta { font-size:10px; color:var(--text3); margin-top:4px; font-family:var(--mono); }
 
+
+/* ══ CHAT MOD PAGE ══════════════════════════════════════════ */
+.cm-filter-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+.cm-stats-row  { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:22px; }
+.chat-msg-row  { display:flex; align-items:flex-start; gap:12px; padding:14px 18px;
+                 background:var(--surf); border:1px solid var(--bdr); border-radius:12px;
+                 margin-bottom:8px; transition:border-color .18s, background .18s; }
+.chat-msg-row:hover { border-color:var(--bdr2); background:var(--surf2); }
+.chat-msg-row.deleted-msg { opacity:.45; }
+.chat-msg-row.flagged-msg { border-left:3px solid var(--red); }
+.chat-msg-row.mod-msg-row { border-left:3px solid var(--blue); background:rgba(59,130,246,.05); }
+.cm-av  { width:38px; height:38px; border-radius:11px; display:flex; align-items:center;
+          justify-content:center; font-size:16px; font-weight:900; color:#fff; flex-shrink:0; }
+.cm-body { flex:1; min-width:0; }
+.cm-meta { display:flex; align-items:center; gap:8px; margin-bottom:5px; flex-wrap:wrap; }
+.cm-author { font-size:13px; font-weight:700; }
+.cm-time   { font-size:10px; color:var(--text2); }
+.cm-badge  { font-size:9px; font-weight:700; padding:1px 6px; border-radius:100px; }
+.cm-badge.mod   { background:rgba(59,130,246,.15); color:var(--blue); border:1px solid rgba(59,130,246,.3); }
+.cm-badge.del   { background:rgba(239,68,68,.12); color:var(--red); border:1px solid rgba(239,68,68,.25); }
+.cm-badge.phone { background:rgba(239,68,68,.18); color:var(--red); font-weight:800; }
+.cm-text   { font-size:13px; color:var(--text); line-height:1.55; word-break:break-word; margin-bottom:6px; }
+.cm-text.deleted-text { color:var(--text3); font-style:italic; }
+.cm-reply-q { background:var(--bg4); border-left:3px solid var(--cyan); border-radius:0 6px 6px 0;
+              padding:3px 8px; font-size:10px; color:var(--text2); margin-bottom:6px;
+              white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cm-actions { display:flex; gap:6px; flex-wrap:wrap; }
+.cm-act     { padding:4px 10px; border-radius:8px; border:1px solid var(--bdr2); background:transparent;
+              font-size:11px; font-weight:600; color:var(--text2); cursor:pointer;
+              font-family:var(--sans); transition:all .18s; }
+.cm-act:hover { background:var(--surf2); color:var(--text); }
+.cm-act.danger { border-color:rgba(239,68,68,.35); color:var(--red); }
+.cm-act.danger:hover { background:rgba(239,68,68,.1); }
+.cm-act.restore { border-color:rgba(16,185,129,.35); color:var(--green); }
+.cm-act.restore:hover { background:rgba(16,185,129,.1); }
+.cm-likes  { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text2); }
+.cm-empty  { text-align:center; padding:50px 20px; color:var(--text2); font-size:14px; }
+.cm-load-more { width:100%; padding:10px; border-radius:10px; border:1px solid var(--bdr2);
+                background:transparent; color:var(--text2); font-family:var(--sans);
+                font-size:13px; font-weight:600; cursor:pointer; transition:all .18s; margin-top:8px; }
+.cm-load-more:hover { background:var(--surf2); color:var(--text); }
+
 </style>
 </head>
 <body>
@@ -514,6 +556,10 @@ canvas.chart-canvas { width:100%; }
       <div class="sn-item" data-page="feedback" onclick="navTo('feedback',this)">
         <span class="sn-ico">💬</span><span class="sn-lbl">Feedback</span>
         <span class="sn-badge" id="feedback-badge" style="display:none">0</span>
+      </div>
+      <div class="sn-item" data-page="chatmod" onclick="navTo('chatmod',this)">
+        <span class="sn-ico">🛡️</span><span class="sn-lbl">Chat Mod</span>
+        <span class="sn-badge" id="chatmod-badge" style="display:none">0</span>
       </div>
       <div class="sn-section-lbl" style="margin-top:8px">System</div>
       <div class="sn-item" data-page="settings" onclick="navTo('settings',this)">
@@ -726,7 +772,7 @@ canvas.chart-canvas { width:100%; }
           <div class="settings-card">
             <div class="settings-card-title">ℹ️ System Info</div>
             <div class="settings-card-sub">Current admin panel status and build info.</div>
-            <div class="setting-row"><div class="setting-lbl">Version</div><div style="font-family:var(--mono);font-size:12px;color:var(--text2)">v1.7.0 BETA</div></div>
+            <div class="setting-row"><div class="setting-lbl">Version</div><div style="font-family:var(--mono);font-size:12px;color:var(--text2)">v1.8.0 BETA</div></div>
             <div class="setting-row"><div class="setting-lbl">Storage API</div><div id="s-storage-status" style="font-size:12px;font-weight:600;color:var(--green)">Checking...</div></div>
             <div class="setting-row"><div class="setting-lbl">BroadcastChannel</div><div id="s-bc-status" style="font-size:12px;font-weight:600;color:var(--green)">Checking...</div></div>
             <div class="setting-row" style="border-bottom:none"><div class="setting-lbl">Total Users Tracked</div><div id="s-user-count" style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--yellow)">0</div></div>
@@ -777,6 +823,37 @@ canvas.chart-canvas { width:100%; }
             <div class="empty-sub">Feedback submitted via Fluentex will appear here</div>
           </div>
         </div>
+      </div>
+
+      <!-- ── CHAT MODERATION PAGE ── -->
+      <div class="page" id="page-chatmod">
+        <div class="cm-stats-row" id="cm-stats-row">
+          <div class="stat-card blue"><span class="sc-ico">💬</span><span class="sc-val" id="cm-total">0</span><span class="sc-lbl">Total Messages</span></div>
+          <div class="stat-card green"><span class="sc-ico">👥</span><span class="sc-val" id="cm-users">0</span><span class="sc-lbl">Unique Users</span></div>
+          <div class="stat-card red"><span class="sc-ico">🚫</span><span class="sc-val" id="cm-deleted">0</span><span class="sc-lbl">Removed Msgs</span></div>
+          <div class="stat-card orange"><span class="sc-ico">⚠️</span><span class="sc-val" id="cm-flagged">0</span><span class="sc-lbl">Phone Flags</span></div>
+        </div>
+
+        <div class="cm-filter-row">
+          <div class="search-wrap" style="flex:1;max-width:320px">
+            <span class="search-ico">🔍</span>
+            <input class="search-inp" id="cm-search" placeholder="Search messages or usernames…" oninput="renderChatMod()">
+          </div>
+          <select class="filter-sel" id="cm-filter-type" onchange="renderChatMod()">
+            <option value="">All Messages</option>
+            <option value="active">Active Only</option>
+            <option value="deleted">Removed Only</option>
+            <option value="mod">Mod Messages</option>
+          </select>
+          <select class="filter-sel" id="cm-filter-user" onchange="renderChatMod()">
+            <option value="">All Users</option>
+          </select>
+          <button class="refresh-btn" onclick="loadChatMod()"><span class="r-ico">↻</span> Refresh</button>
+          <button class="export-btn" onclick="clearAllChat()" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:var(--red)">🗑 Clear All</button>
+        </div>
+
+        <div id="cm-list"></div>
+        <button class="cm-load-more" id="cm-load-more" onclick="cmLoadMore()" style="display:none">⬇ Load older messages</button>
       </div>
 
     </div><!-- /content -->
@@ -1555,6 +1632,7 @@ const PAGE_META = {
   live:      { title:'Live Feed',       sub:'Real-time event stream from active Fluentex sessions' },
   settings:  { title:'Settings',        sub:'Admin credentials, data settings and system info' },
   feedback:  { title:'Feedback',        sub:'User-submitted feature suggestions and bug reports' },
+  chatmod:   { title:'Chat Moderation',  sub:'Monitor, search and moderate Global Community Chat messages' },
 };
 function navTo(pageId, el){
   document.querySelectorAll('.sn-item').forEach(i=>i.classList.remove('active'));
@@ -1567,6 +1645,7 @@ function navTo(pageId, el){
   if(pageId==='analytics') updateAnalytics();
   if(pageId==='live') renderFeed();
   if(pageId==='feedback') loadFeedback();
+  if(pageId==='chatmod') loadChatMod();
 }
 function toggleNav(){
   document.getElementById('sidenav').classList.toggle('collapsed');
@@ -1883,6 +1962,184 @@ document.addEventListener('DOMContentLoaded', function(){
   const notifOvl = document.getElementById('notif-modal');
   if(notifOvl) notifOvl.addEventListener('click', e=>{ if(e.target===e.currentTarget) closeNotifModal(); });
 });
+
+
+/* ══════════════════════════════════════════════════════════════════
+   ADMIN CHAT MODERATION
+══════════════════════════════════════════════════════════════════ */
+
+const CHAT_KEY_ADMIN = 'fx_chat_v2';
+const PHONE_RE_ADMIN = /(\+?\d[\d\s\-\.\(\)]{7,}\d)/g;
+
+let _cmAll      = [];
+let _cmShown    = 40;
+const CM_PAGE   = 40;
+
+// ── Avatar colour ───────────────────────────────────────────────
+const CM_AV_COLORS=['#3b82f6','#10b981','#8b5cf6','#f97316','#f59e0b','#ef4444','#22d3ee','#ec4899','#14b8a6','#f43f5e'];
+function cmAvColor(name){ let h=0; for(let i=0;i<(name||'').length;i++) h=(h*31+(name||'').charCodeAt(i))%CM_AV_COLORS.length; return CM_AV_COLORS[h]; }
+function cmAvLetter(name){ return (name||'?')[0].toUpperCase(); }
+
+function cmTimeAgo(ts){
+  const diff = Date.now()-ts;
+  if(diff<60000) return 'just now';
+  if(diff<3600000) return Math.floor(diff/60000)+'m ago';
+  if(diff<86400000){ const d=new Date(ts); return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
+  const d=new Date(ts); return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+
+// ── Load chat data ──────────────────────────────────────────────
+function loadChatMod(){
+  try{ _cmAll = JSON.parse(localStorage.getItem(CHAT_KEY_ADMIN)||'[]'); }catch(e){ _cmAll=[]; }
+  _cmShown = CM_PAGE;
+
+  // Update stats
+  const total   = _cmAll.length;
+  const deleted = _cmAll.filter(m=>m.deleted).length;
+  const users   = new Set(_cmAll.map(m=>m.author)).size;
+  let flagged   = 0;
+  _cmAll.forEach(m=>{ PHONE_RE_ADMIN.lastIndex=0; if(!m.isMod&&!m.deleted&&PHONE_RE_ADMIN.test(m.text||'')) flagged++; });
+  document.getElementById('cm-total').textContent   = total;
+  document.getElementById('cm-deleted').textContent = deleted;
+  document.getElementById('cm-users').textContent   = users;
+  document.getElementById('cm-flagged').textContent = flagged;
+
+  // Populate user filter
+  const userSel = document.getElementById('cm-filter-user');
+  const prev = userSel.value;
+  const uniqueUsers = [...new Set(_cmAll.map(m=>m.author))].sort();
+  userSel.innerHTML = '<option value="">All Users</option>'
+    + uniqueUsers.map(u=>`<option value="${esc(u)}"${u===prev?' selected':''}>${esc(u)}</option>`).join('');
+
+  // Badge count = active (non-deleted, non-mod) messages in last hour
+  const recentActive = _cmAll.filter(m=>!m.deleted&&!m.isMod&&(Date.now()-m.ts)<3600000).length;
+  const badge = document.getElementById('chatmod-badge');
+  if(badge){ if(recentActive>0){ badge.textContent=recentActive; badge.style.display=''; } else badge.style.display='none'; }
+
+  renderChatMod();
+  showToast('Chat data loaded — '+total+' messages', 'success');
+}
+
+// ── Render filtered list ────────────────────────────────────────
+function renderChatMod(){
+  const wrap   = document.getElementById('cm-list');
+  if(!wrap) return;
+  const search = (document.getElementById('cm-search')?.value||'').toLowerCase();
+  const ftype  = document.getElementById('cm-filter-type')?.value||'';
+  const fuser  = document.getElementById('cm-filter-user')?.value||'';
+
+  let msgs = [..._cmAll].reverse(); // newest first
+
+  if(ftype==='active')  msgs = msgs.filter(m=>!m.deleted&&!m.isMod);
+  if(ftype==='deleted') msgs = msgs.filter(m=>m.deleted);
+  if(ftype==='mod')     msgs = msgs.filter(m=>m.isMod||m.author==='FluentexMod');
+  if(fuser)             msgs = msgs.filter(m=>m.author===fuser);
+  if(search)            msgs = msgs.filter(m=>(m.text||'').toLowerCase().includes(search)||(m.author||'').toLowerCase().includes(search));
+
+  const total = msgs.length;
+  const shown = Math.min(_cmShown, total);
+  const visible = msgs.slice(0, shown);
+
+  const loadMoreBtn = document.getElementById('cm-load-more');
+  if(loadMoreBtn) loadMoreBtn.style.display = shown < total ? '' : 'none';
+
+  if(!visible.length){
+    wrap.innerHTML = '<div class="cm-empty">🔍 No messages match your filters</div>';
+    return;
+  }
+
+  wrap.innerHTML = visible.map(m=>{
+    PHONE_RE_ADMIN.lastIndex=0;
+    const hasPhone = !m.isMod && !m.deleted && PHONE_RE_ADMIN.test(m.text||'');
+    PHONE_RE_ADMIN.lastIndex=0;
+    const isMod = m.isMod || m.author==='FluentexMod';
+    const lc = (m.likes||[]).length, dc = (m.dislikes||[]).length;
+
+    let rowClass = 'chat-msg-row';
+    if(m.deleted) rowClass+=' deleted-msg';
+    if(hasPhone)  rowClass+=' flagged-msg';
+    if(isMod)     rowClass+=' mod-msg-row';
+
+    let badges='';
+    if(isMod)     badges+='<span class="cm-badge mod">MOD</span>';
+    if(m.deleted) badges+='<span class="cm-badge del">REMOVED</span>';
+    if(hasPhone)  badges+='<span class="cm-badge phone">📞 PHONE</span>';
+
+    const replyQ = m.replyTo && m.replyTo.author
+      ? `<div class="cm-reply-q">↩ ${esc(m.replyTo.author)}: ${esc((m.replyTo.text||'').slice(0,70))}</div>` : '';
+
+    const actions = m.deleted
+      ? `<button class="cm-act restore" onclick="cmRestore('${esc(m.id)}')">↩ Restore</button>`
+      : `<button class="cm-act danger"  onclick="cmDelete('${esc(m.id)}')">🗑 Remove</button>`;
+
+    return `<div class="${rowClass}" id="cmrow-${esc(m.id)}">
+      <div class="cm-av" style="background:${cmAvColor(m.author)}">${cmAvLetter(m.author)}</div>
+      <div class="cm-body">
+        <div class="cm-meta">
+          <span class="cm-author">${esc(m.author)}</span>
+          <span>${m.flag||'🌍'}</span>
+          ${badges}
+          <span class="cm-time">${cmTimeAgo(m.ts)}</span>
+        </div>
+        ${replyQ}
+        <div class="cm-text${m.deleted?' deleted-text':''}">${esc(m.text||'')}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:6px">
+          <div class="cm-likes">👍 ${lc} &nbsp; 👎 ${dc}</div>
+          <div class="cm-actions">${actions}<button class="cm-act" onclick="cmNotifyUser('${esc(m.author)}','${esc(m.id)}')">🔔 Warn User</button></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function cmLoadMore(){ _cmShown += CM_PAGE; renderChatMod(); }
+
+// ── Delete / Restore ────────────────────────────────────────────
+function cmDelete(id){
+  const msgs = JSON.parse(localStorage.getItem(CHAT_KEY_ADMIN)||'[]');
+  const m = msgs.find(x=>x.id===id);
+  if(!m) return;
+  m.deleted = true;
+  m.text = '🚫 Message removed by admin';
+  localStorage.setItem(CHAT_KEY_ADMIN, JSON.stringify(msgs));
+  loadChatMod();
+  showToast('Message removed', 'success');
+  try{ new BroadcastChannel('fluentex_chat').postMessage({type:'chat_update',ts:Date.now()}); }catch(e){}
+}
+function cmRestore(id){
+  const msgs = JSON.parse(localStorage.getItem(CHAT_KEY_ADMIN)||'[]');
+  const m = msgs.find(x=>x.id===id);
+  if(!m) return;
+  m.deleted = false;
+  if(m.text==='🚫 Message removed by admin') m.text='[Restored]';
+  localStorage.setItem(CHAT_KEY_ADMIN, JSON.stringify(msgs));
+  loadChatMod();
+  showToast('Message restored', 'success');
+  try{ new BroadcastChannel('fluentex_chat').postMessage({type:'chat_update',ts:Date.now()}); }catch(e){}
+}
+function clearAllChat(){
+  if(!confirm('Clear ALL chat messages? This cannot be undone.')) return;
+  localStorage.removeItem(CHAT_KEY_ADMIN);
+  _cmAll=[];
+  loadChatMod();
+  showToast('All chat messages cleared', 'success');
+  try{ new BroadcastChannel('fluentex_chat').postMessage({type:'chat_update',ts:Date.now()}); }catch(e){}
+}
+
+// ── Warn user: pre-fill the existing notification modal ─────────
+function cmNotifyUser(authorName, msgId){
+  openNotifModal(authorName);
+  setTimeout(()=>{
+    const titleEl = document.getElementById('notif-title');
+    const msgEl   = document.getElementById('notif-msg');
+    if(titleEl) titleEl.value = '⚠️ Community Guidelines Warning';
+    if(msgEl)   msgEl.value   = 'Hi '+authorName+', your recent message in Community Chat was flagged for violating community guidelines. Please keep conversations respectful and avoid sharing personal information. Continued violations may result in a ban.';
+    const preview = document.getElementById('notif-preview');
+    if(preview) preview.textContent = msgEl ? msgEl.value : '';
+    // switch type to warning
+    document.querySelectorAll('.notif-type-btn').forEach(b=>{ b.classList.toggle('active', b.dataset.type==='warning'); });
+  }, 100);
+}
 
 </script>
 </body>
