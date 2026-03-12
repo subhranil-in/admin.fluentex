@@ -980,13 +980,12 @@ function loadSettings(){
 }
 
 function checkSystemStatus(){
-  // window.storage
-  const hasStorage = typeof window.storage !== 'undefined';
-  document.getElementById('s-storage-status').textContent = hasStorage ? '✅ Available' : '⚠️ Unavailable (local only)';
-  document.getElementById('s-storage-status').style.color = hasStorage ? 'var(--green)' : 'var(--yellow)';
+  // localStorage — always available in any browser
+  document.getElementById('s-storage-status').textContent = '✅ localStorage (always available)';
+  document.getElementById('s-storage-status').style.color = 'var(--green)';
   // BroadcastChannel
   const hasBC = typeof BroadcastChannel !== 'undefined';
-  document.getElementById('s-bc-status').textContent = hasBC ? '✅ Available' : '❌ Not supported';
+  document.getElementById('s-bc-status').textContent = hasBC ? '✅ Available (real-time notifications)' : '❌ Not supported';
   document.getElementById('s-bc-status').style.color = hasBC ? 'var(--green)' : 'var(--red)';
 }
 
@@ -998,6 +997,13 @@ function initBroadcastChannel(){
     adChannel = new BroadcastChannel('fluentex_lb');
     adChannel.onmessage = (e) => {
       if(!adminSettings.liveFeed) return;
+      // New feedback submitted from app
+      if(e.data && e.data.type === 'new_feedback'){
+        loadFeedback(false);
+        const fb = e.data.item || {};
+        addFeedEvent({ ico: fb.type==='suggestion'?'💡':'🐛', msg: '<span>'+(fb.name||'User')+'</span> submitted '+(fb.type==='suggestion'?'a suggestion':'a bug report'), detail: (fb.category||fb.bugType||''), time: new Date().toLocaleTimeString() });
+        return;
+      }
       if(e.data && e.data.type === 'lb_update' && e.data.entry){
         const entry = e.data.entry;
         lbUpdateCnt++;
@@ -1607,37 +1613,16 @@ document.addEventListener('keydown', e=>{
 ══════════════════════════════════════════════ */
 
 async function loadFeedback(showToast_=true){
-  if(typeof window.storage === 'undefined'){
-    document.getElementById('fb-list').innerHTML =
-      '<div class="fb-empty"><span class="empty-ico">⚠️</span><div class="empty-msg">Shared storage unavailable</div><div class="empty-sub">window.storage API is required to load feedback submissions</div></div>';
-    return;
-  }
-
-  allSuggestions = [];
-  allBugReports  = [];
-
   try {
-    // load suggestions
-    const sList = await window.storage.list(FX_SUGGEST_PFX, true);
-    if(sList && sList.keys && sList.keys.length){
-      const results = await Promise.allSettled(sList.keys.map(k => window.storage.get(k, true)));
-      results.forEach(r => {
-        if(r.status === 'fulfilled' && r.value && r.value.value){
-          try { const item = JSON.parse(r.value.value); if(item && item.id) allSuggestions.push(item); } catch(e){}
-        }
-      });
-    }
-    // load bug reports
-    const bList = await window.storage.list(FX_BUG_PFX, true);
-    if(bList && bList.keys && bList.keys.length){
-      const results = await Promise.allSettled(bList.keys.map(k => window.storage.get(k, true)));
-      results.forEach(r => {
-        if(r.status === 'fulfilled' && r.value && r.value.value){
-          try { const item = JSON.parse(r.value.value); if(item && item.id) allBugReports.push(item); } catch(e){}
-        }
-      });
-    }
-  } catch(e){ console.warn('loadFeedback error:', e); }
+    allSuggestions = JSON.parse(localStorage.getItem('fx_suggests_local') || '[]');
+    allBugReports  = JSON.parse(localStorage.getItem('fx_bugs_local')     || '[]');
+  } catch(e){
+    allSuggestions = [];
+    allBugReports  = [];
+  }
+  // Ensure correct type tags
+  allSuggestions.forEach(x => { if(!x.type) x.type='suggestion'; });
+  allBugReports.forEach(x  => { if(!x.type) x.type='bug_report'; });
 
   // Sort newest first
   allSuggestions.sort((a,b) => new Date(b.ts||0) - new Date(a.ts||0));
@@ -1646,7 +1631,7 @@ async function loadFeedback(showToast_=true){
   updateFeedbackStats();
   buildCatFilter();
   renderFeedback();
-  if(showToast_) showToast(`✅ Loaded ${allSuggestions.length + allBugReports.length} submissions`, 'success');
+  if(showToast_) showToast('✅ Loaded '+(allSuggestions.length+allBugReports.length)+' submissions', 'success');
 }
 
 function updateFeedbackStats(){
@@ -1749,31 +1734,31 @@ function renderFbCard(item){
 }
 
 async function markReviewed(id, type){
-  const arr = type === 'suggest' ? allSuggestions : allBugReports;
-  const pfx = type === 'suggest' ? FX_SUGGEST_PFX : FX_BUG_PFX;
-  const item = arr.find(x => x.id === id);
+  const arr    = type === 'suggest' ? allSuggestions : allBugReports;
+  const lsKey  = type === 'suggest' ? 'fx_suggests_local' : 'fx_bugs_local';
+  const item   = arr.find(x => x.id === id);
   if(!item) return;
   item.status = 'reviewed';
   try {
-    await window.storage.set(pfx + item.id, JSON.stringify(item), true);
+    localStorage.setItem(lsKey, JSON.stringify(arr));
     updateFeedbackStats();
     renderFeedback();
     showToast('✅ Marked as reviewed', 'success');
-  } catch(e){ showToast('❌ Failed to update', 'error'); }
+  } catch(e){ showToast('❌ Failed to update: '+e.message, 'error'); }
 }
 
 async function deleteFeedback(id, type){
   if(!confirm('Delete this submission permanently?')) return;
-  const arr = type === 'suggest' ? allSuggestions : allBugReports;
-  const pfx = type === 'suggest' ? FX_SUGGEST_PFX : FX_BUG_PFX;
+  const lsKey = type === 'suggest' ? 'fx_suggests_local' : 'fx_bugs_local';
   try {
-    await window.storage.delete(pfx + id, true);
     if(type === 'suggest') allSuggestions = allSuggestions.filter(x => x.id !== id);
     else allBugReports = allBugReports.filter(x => x.id !== id);
+    const arr = type === 'suggest' ? allSuggestions : allBugReports;
+    localStorage.setItem(lsKey, JSON.stringify(arr));
     updateFeedbackStats();
     renderFeedback();
     showToast('🗑 Submission deleted', 'info');
-  } catch(e){ showToast('❌ Failed to delete', 'error'); }
+  } catch(e){ showToast('❌ Failed to delete: '+e.message, 'error'); }
 }
 
 /* ══════════════════════════════════════════════
@@ -1838,7 +1823,6 @@ async function sendNotification(){
   const type  = document.getElementById('nm-type').value;
 
   if(!title || !msg){ showToast('⚠️ Fill in title and message', 'error'); return; }
-  if(typeof window.storage === 'undefined'){ showToast('❌ Shared storage unavailable', 'error'); return; }
 
   const btn = document.getElementById('nm-send-btn');
   btn.disabled   = true;
@@ -1846,31 +1830,33 @@ async function sendNotification(){
 
   const isBroadcast = (notifTarget === '_broadcast');
   const ts  = Date.now();
-  const nid = 'notif_' + ts;
 
   const notif = {
-    id:     nid,
-    title:  title,
-    message:msg,
-    type:   type,
-    from:   'admin',
-    target: notifTarget,
-    ts:     ts,
-    read:   false,
+    id:      'notif_' + ts + '_' + Math.random().toString(36).slice(2,7),
+    title:   title,
+    message: msg,
+    type:    type,
+    from:    'admin',
+    target:  notifTarget,
+    ts:      ts,
+    read:    false,
     refItem: notifRefItem || null,
   };
 
   try {
-    if(isBroadcast){
-      // Broadcast: store under a well-known broadcast key + timestamp
-      const key = FX_NOTIF_PFX + '_broadcast_' + ts;
-      await window.storage.set(key, JSON.stringify(notif), true);
-    } else {
-      // User-specific: key by slugged username
-      const slug = notifTarget.toLowerCase().replace(/[^a-z0-9]/g,'_').slice(0,24);
-      const key  = FX_NOTIF_PFX + slug + '_' + ts;
-      await window.storage.set(key, JSON.stringify(notif), true);
-    }
+    // 1. Persist to localStorage under the correct per-user or broadcast key
+    const lsKey = isBroadcast ? 'fx_notifs_broadcast' : ('fx_notifs_u_' + notifTarget.toLowerCase().replace(/[^a-z0-9]/g,'_').slice(0,24));
+    let arr = [];
+    try { arr = JSON.parse(localStorage.getItem(lsKey) || '[]'); } catch(e){}
+    arr.unshift(notif);
+    localStorage.setItem(lsKey, JSON.stringify(arr.slice(0, 100)));
+
+    // 2. Fire over BroadcastChannel for instant in-tab delivery
+    try {
+      const ch = new BroadcastChannel('fluentex_notif');
+      ch.postMessage({ type: 'push_notif', notif });
+      ch.close();
+    } catch(e){}
 
     // If replying to feedback, mark it reviewed automatically
     if(notifRefItem){
@@ -1880,11 +1866,11 @@ async function sendNotification(){
     closeNotifModal();
     addFeedEvent({
       ico:  '🔔',
-      msg:  `Admin sent <span>${type}</span> notification → ${isBroadcast ? 'All Users' : notifTarget}`,
-      detail: `"${title}"`,
+      msg:  'Admin sent <span>' + type + '</span> notification → ' + (isBroadcast ? 'All Users' : notifTarget),
+      detail: '"' + title + '"',
       time: new Date().toLocaleTimeString()
     });
-    showToast(`✅ Notification sent to ${isBroadcast?'all users':notifTarget}`, 'success');
+    showToast('✅ Notification sent to ' + (isBroadcast ? 'all users' : notifTarget), 'success');
   } catch(e){
     btn.disabled   = false;
     btn.textContent= '🔔 Send Notification';
